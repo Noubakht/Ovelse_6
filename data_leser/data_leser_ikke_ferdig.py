@@ -50,3 +50,5 @@ print("trykk - absol.:  ", trykk_absolutt[2])
 print("temperaturer:    ", temperaturer[2])
 
 #print(f"Dato: {datoer[0:5]}", f"tider etter start: {tid_siden_start[0:5]}")
+
+#hei på deg
