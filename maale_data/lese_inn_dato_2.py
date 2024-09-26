@@ -5,6 +5,7 @@ Created on Wed Sep 25 19:34:02 2024
 @author: nouba
 """
 import re
+from datetime import datetime
 
 dato_mønster = r'\b\d{2}\.\d{2}\.\d{4}\b'
 
@@ -28,3 +29,14 @@ def finn_mønster_i_fil(filnavn, mønster):
 
 datoer = finn_mønster_i_fil('trykk_og_temperaturlogg_rune_time.csv.txt', dato_mønster)
 print(datoer)
+
+
+
+dato_streng = 
+dato_objekt = datetime.strptime(dato_streng, "%d-%m")
+
+tid_streng = "14:30"
+tid_objekt = datetime.strptime(tid_streng, "%H:%M")
+print(tid_objekt)
+
+print(dato_objekt)
