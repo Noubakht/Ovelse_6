@@ -14,7 +14,7 @@ def les_vaerdata(filnavn):
     temperaturer = []
 
     # Åpne filen for lesing
-    with open(filnavn, 'r') as fil:
+    with open(filnavn, 'r', encoding='UTF-8') as fil:
         next(fil)
         for linje in fil:
             # Fjerner eventuelle ekstra mellomrom eller linjeskift
@@ -28,9 +28,9 @@ def les_vaerdata(filnavn):
             # Legg til data i de respektive listene
             datoer.append(data[0])           #første kolonne: datoer
             tider.append(data[1])                 #andre kolonne: tid
-            tid_siden_start.append(data[2])         #tredje kolonne: tid siden start
-            trykk_barometer.append(data[3])         #fjerde kolonne: trykk - barometer
-            trykk_absolutt.append(data[4])              #femte kolonne: trykk - absolutt trykk maaler
+            tid_siden_start.append(float(data[2]))         #tredje kolonne: tid siden start
+            trykk_barometer.append(data[3].replace(",", "."))         #fjerde kolonne: trykk - barometer
+            trykk_absolutt.append(data[4].replace(",", "."))              #femte kolonne: trykk - absolutt trykk maaler
             temperaturer.append(data[5:])    #sjette kolonne: temperatur (konverter til flyttall)
 
     return datoer, tider, tid_siden_start, trykk_barometer, trykk_absolutt, temperaturer
@@ -42,8 +42,8 @@ datoer, tider, tid_siden_start, trykk_barometer, trykk_absolutt, temperaturer = 
 #prøv å print ut en liste med kolonnenavn og radnummer
 #print(datoer[12097])   #skille på ny datoformat går her, (12097)   
 #print(tider[0:30])
-print("dato:            ", datoer[2])
-print("klokkeslett:     ", tider[2])
+print("dato:            ", datoer[0:2])
+print("klokkeslett:     ", tider[0:2])
 print("tid siden start: ", tid_siden_start[2])
 print("trykk - barom.:  ", trykk_barometer[2])
 print("trykk - absol.:  ", trykk_absolutt[2])
