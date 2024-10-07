@@ -5,20 +5,15 @@ Created on Mon Oct  7 14:55:00 2024
 @author: nouba
 """
 
-# =============================================================================
-# Her en en ny kode med kun det vi har lært i DAT120. ingen tilleggsbiblioteker 
-# som i de to andre kodene. Jeg har skrevet en detaljert beskrivelse av to
-# deler i koden som vi sleit med for å få til de to forrige kodene, og som gjorde
-# at vi brukte csv biblioteket. Denne koden kan godt endres til å lese inn data
-# fra den andre filen også.
-# =============================================================================
-
-
 from datetime import datetime
 import matplotlib.pyplot as plt
 
+
+# =============================================================================
+# OPPGAVE D OG E (FIL NR. 1 (DEN LANGE FILA))
+# =============================================================================
 #filnavnet som skal leses
-filnavn = 'trykk_og_temperaturlogg_rune_time.csv.txt'
+filnavn_1 = 'trykk_og_temperaturlogg_rune_time.csv.txt'
 
 #funksjon som leser inn data fra 'filnavn'
 def data_leser (filnavn):
@@ -42,9 +37,9 @@ def data_leser (filnavn):
 # ['123,3', '321', '3234', '12']
 # =============================================================================
     
-#åpner filen "filnavn" for lesing ("r") og konverterer til "utf-8" som er 
+#åpner filen "filnavn_1" for lesing ("r") og konverterer til "utf-8" som er 
 #standard for tekstfilbehandling, og kaller filen for "fil"
-    with open(filnavn, 'r', encoding='utf-8') as fil:
+    with open(filnavn_1, 'r', encoding='utf-8') as fil:
         
 #itererer gjennom hver "linje" i "fil" og lagrer data i de forskjellige listene 
         for linje in fil:
@@ -75,10 +70,13 @@ def data_leser (filnavn):
             temperatur.append(data_deler[4])             #beskrivelse over
             
 
-    return datoer, tider, dt_objekter_1, tid_siden_start, trykk_bar, trykk_abs, temperatur
+    return (datoer, tider, dt_objekter_1, 
+            tid_siden_start, trykk_bar, trykk_abs, temperatur)
 
 #Kaller på funksjonen data_leser med alle listenavnene slik at de fylles
-datoer, tider, dt_objekter_1, tid_siden_start, trykk_bar, trykk_abs, temperatur = data_leser(filnavn)
+(datoer, tider, dt_objekter_1, 
+tid_siden_start, trykk_bar, 
+trykk_abs, temperatur) = data_leser(filnavn_1)
 
 # =============================================================================
 # Bruker en for-løkke og går igjennom (itererer) listene element for element.
@@ -89,18 +87,33 @@ datoer, tider, dt_objekter_1, tid_siden_start, trykk_bar, trykk_abs, temperatur 
 # problemer senere når vi skal plotte verdiene inn i grafer. 
 # Resultat: listen oppdateres med flyttallsverdier eller None for tomme verdier
 # =============================================================================
+# i siste oppgave må trykkene plottes i en og sakke koordinatsystem. siden
+# trykkene i denne fila er på bar ganger jeg med 10 for å gjøre om til
+# hektopascal fra bar.
+# =============================================================================
 
-#Endrer trykk barometer lista
+#Endrer trykk barometer lista (ganger med 10 for å gjøre om til hPa)
 for i in range(len(trykk_bar)):
     if trykk_bar[i]:    #sjekker om det er verdier der
-        trykk_bar[i] = float(trykk_bar[i].replace(',', '.'))
+        trykk_bar[i] = float(trykk_bar[i].replace(',', '.')) * 10
     else:               #hvis verdien er tom, sett det til None
         trykk_bar[i] = None
 
-#Endrer trykk absolutt lista
+#Her har jeg driti meg ut og trodd at matplotlib godtar None. men det gjorde
+#den ikke så jeg gidder ikke endre koden mer nå. bare legger til denne her
+#for å fikse problemet       
+trykk_bar_endret = []
+tid_trykk_bar_endret = []
+
+for i in range(len(trykk_bar)):
+    if trykk_bar[i] is not None:  #Sjekker om verdien ikke er None
+        trykk_bar_endret.append(trykk_bar[i])
+        tid_trykk_bar_endret.append(dt_objekter_1[i])
+
+#Endrer trykk absolutt lista (ganger med 10 for å gjøre om til hPa)
 for i in range(len(trykk_abs)):
     if trykk_abs[i]:    #sjekke om det er verdier der
-        trykk_abs[i] = float(trykk_abs[i].replace(',', '.'))
+        trykk_abs[i] = float(trykk_abs[i].replace(',', '.')) * 10
     else:               #hvis verdien er tom, sett det til None
         trykk_abs[i] = None
         
@@ -113,13 +126,13 @@ for i in range(len(temperatur)):
         
         
 # =============================================================================
-# FIL NR 2. (DEN KORTE FILA)
+# OPPGAVE D OG E. (FIL NR 2. (DEN KORTE FILA))
 # =============================================================================
 #filnavnet som skal leses
-filnavn = 'temperatur_trykk_met_samme_rune_time_datasett.csv.txt'
+filnavn_2 = 'temperatur_trykk_met_samme_rune_time_datasett.csv.txt'
 
 #funksjon som leser inn data fra 'filnavn'
-def data_leser_2 (filnavn):
+def data_leser_2 (filnavn_2):
 
     datoer_2 = []
     tider_2 = []
@@ -128,7 +141,7 @@ def data_leser_2 (filnavn):
     trykk_hav = []
     
 #Åpner filen "filnavn" for lesing i utf-8 konvertert form    
-    with open(filnavn, 'r', encoding='utf-8') as fil:
+    with open(filnavn_2, 'r', encoding='utf-8') as fil:
 #Leser linje for linje og opretter datetime objekter og fyller tid og dato i
 #hver sin liste. Fyller de andre to listene med relaterte data i strengformat
         for linje in fil:
@@ -136,8 +149,8 @@ def data_leser_2 (filnavn):
                 data_deler = linje.strip().split(';')
                 dato_tid = datetime.strptime(data_deler[2], '%d.%m.%Y %H:%M')
                 dt_objekter_2.append(dato_tid)
-                datoer_2.append(dato_tid.date())
-                tider_2.append(dato_tid.time()) 
+                datoer_2.append(dato_tid.date())    #bare datoen (Unødvendig?)
+                tider_2.append(dato_tid.time())     #bare tiden (Unødvendig?)
             except ValueError: 
                 continue
             
@@ -147,7 +160,8 @@ def data_leser_2 (filnavn):
     return datoer_2, tider_2, dt_objekter_2, temperatur_luft, trykk_hav
 
 #Kaller på funksjonen og fyller listene
-datoer_2, tider_2, dt_objekter_2, temperatur_luft, trykk_hav = data_leser_2(filnavn)
+(datoer_2, tider_2, dt_objekter_2, 
+temperatur_luft, trykk_hav) = data_leser_2(filnavn_2)
 
 
 #Gjør om verdiene i lufttemperatur til flyttall
@@ -164,40 +178,148 @@ for i in range (len(trykk_hav)):
     else:
         trykk_hav[i] = None
         
+# =============================================================================
+# OPPGAVE G) Gjennomsnittstemperatur fra den lange lista med data.
+# =============================================================================
+# =============================================================================
+# Funksjonen "gj_temp" gjør følgende:
+# Itererer gjennom lista "temperatur" og starter på indeks n og går til lengden
+# av "temperatur" minus n. (altså starter på 30 og går til slutten minus 30) 
+# "delta_temp" slicer opp alle temperaturer fra i-n til i+n+1 (i+n+1) fordi 
+# listeslicing tar ikke med sluttverdien.
+# "gjennomsnitt" regner summen av "delta_temp" og deler på lengden av 
+# "delta_temp". altså regner den ut gjennomsnittet til det lille vinduet vi har 
+# laget oss med listeslicingen.
+# =============================================================================
 
-def gjennomsnitt_temperatur (gjennomsnitt):
-    for i in range():
-        n = 30
-        t_forrige = 0
-        t_forrige += temperatur[i]
+#Funksjon som regner gjennomsnittet på de 30 siste, gjeldende og 30 neste temp.
+def gj_temp (gj_tider, gjennomsnitt_temp, n):
+    gjennomsnitt_temp = []  #tom liste for gjennomsnittet som skal regnes ut
+    gj_tider = []  #tom liste til tider som skal høre til gjennomsnittet
+
+
+    for i in range(n, len(temperatur) - n):
+        delta_temp = temperatur[(i-n) : (i + n + 1)]
+        gjennomsnitt = sum(delta_temp)/len(delta_temp)
         
+        gjennomsnitt_temp.append(gjennomsnitt)
+        gj_tider.append(dt_objekter_1[i])
+        
+    return gj_tider, gjennomsnitt_temp
+
+gj_tider, gjennomsnitt_temp = gj_temp(dt_objekter_1, temperatur, 30)
 
 
+# =============================================================================
+# OPPGAVE H (Temperaturfall mellom 11.06.21 kl 17:32 til 12.06.21 kl 03:05)
+# =============================================================================
+
+# Funksjon for å beregne temperaturfallet
+def temperaturfall(dt_objekter_1, temperatur, indeks_1, indeks_2):
+    delta_temp = temperatur[indeks_2] - temperatur[indeks_1]
+    delta_tid = (dt_objekter_1[indeks_2] - dt_objekter_1[indeks_1]).total_seconds()
+    
+    stigningstall = delta_temp / delta_tid  # Endring i temperatur per sekund
+    
+    #returner de to punktene og stigningstallet
+    return (stigningstall, dt_objekter_1[indeks_1], 
+            temperatur[indeks_1], dt_objekter_1[indeks_2], temperatur[indeks_2])
+
+indeks_1 = 1128  #indeks for starttid
+indeks_2 = 4570  #indeks for sluttid
+
+(stigningstall, 
+tid_start, 
+temp_start,
+tid_slutt,
+temp_slutt) = temperaturfall(dt_objekter_1, temperatur, indeks_1, indeks_2)
 
 
-#x-koordinater fra lengste fil
-x_koordinater_1 = (dt_objekter_1)
-#y-koordinater fra lengste fil
-y_koordinater_1 = (temperatur)
+# =============================================================================
+# ALL PLOTTING SKJER UNDER DENNE LINJA
+# =============================================================================
 
-#x-koordinater fra korteste fil
-x_koordinater_2 = (dt_objekter_2)
-#y-koordinater fra korteste fil
-y_koordinater_2 = (temperatur_luft)
+figuren, (akse1, akse2) = plt.subplots(2, 1, figsize=(12,8))
 
-#temperaturer fra den lengste fila
-plt.plot(x_koordinater_1, y_koordinater_1, label="Temperatur", color='blue', 
-         linewidth=1)
+# =============================================================================
+# OPPGAVE I (plotting av lufttrykk,)
+# =============================================================================
 
-#temperaturer fra den lengste fila
-plt.plot(x_koordinater_2, y_koordinater_2, label="Temperatur MET", color='green',
-         linewidth=1)
+#x og y_koordinater for barometrisk og absolutt lufttrykk fra den lange fila
+x_trykk_bar = tid_trykk_bar_endret
+y_trykk_bar = trykk_bar_endret
 
-#temperaturer fra den andre fila
+x_trykk_abs = dt_objekter_1
+y_trykk_abs = trykk_abs
+
+#Plotting av barometrisk trykk (oransj graf)
+akse2.plot(x_trykk_bar, y_trykk_bar, label="Barometrisk trykk", 
+           color='orange', linewidth=0.5)
+#Plotting av absolutt trykk (blå graf)
+akse2.plot(x_trykk_abs, y_trykk_abs, label="Absolutt trykk", color='blue', 
+           linewidth=0.5)
+
+#x og y_koordinater for absolutt trykk MET fra den korte fila
+x_lufttrykk_MET = dt_objekter_2
+y_lufttrykk_MET = trykk_hav
+
+#plotting av absolutt trykk MET (Grønn graf)
+akse2.plot(x_lufttrykk_MET, y_lufttrykk_MET, label="Absolutt trykk MET",
+           color='green', linewidth=0.5)
+
+# =============================================================================
+# OPPGAVE F (Plotting av temperaturer fra begge datafilene)
+# =============================================================================
+
+#x og y-koordinater til temperaturer fra lengste fil 
+x_temperatur = dt_objekter_1
+y_temperatur = temperatur
+
+#x og y-koordinater til temperaturer fra korteste fil
+x_temperatur_2 = dt_objekter_2
+y_temperatur_2 = temperatur_luft
+
+#Plotting av temperaturer fra den lengste fila (blå graf)
+akse1.plot(x_temperatur, y_temperatur, label="Temperatur", color='blue', 
+         linewidth=0.5)
+
+#Plotting av temperaturer fra den korteste fila (grønn graf)
+akse1.plot(x_temperatur_2, y_temperatur_2, label="Temperatur MET", color='green',
+         linewidth=0.5)
+
+# =============================================================================
+# Plotting av gjennomsnittstemperatur fra oppgave G
+# =============================================================================
+
+#x og y-koordinater til gjennomsnittstemperaturen
+x_gjennomsnitt_temp = gj_tider
+y_gjennomsnitt_temp = gjennomsnitt_temp
+
+#Plotting av gjennomsnittstemperaturen (oransj graf)
+akse1.plot(x_gjennomsnitt_temp, y_gjennomsnitt_temp, 
+           label="Gjennomsnittstemperatur", color='orange', linewidth=0.5)
+
+
+# =============================================================================
+# Plotting av temperaturfall fra oppgave H
+# =============================================================================
+
+#x og y-koordinater for temperaturfallet
+x_temperaturfall = tid_start, tid_slutt
+y_temperaturfall = temp_start, temp_slutt
+
+# Plot linjen som representerer temperaturfallet (rød graf, litt svak rødfarge)
+akse1.plot(x_temperaturfall, y_temperaturfall, label="Temperaturfall", 
+         color='red', linewidth=0.5)
+
+
+#plottemetoder for koordinatsystem med temperaturer
+akse1.legend()
+akse1.grid()
+
+#plottemetoder for koordinatsystem med trykk
+akse2.legend()
+akse2.grid()
+
 plt.plot()
-plt.legend()
 plt.show()
-
-
-print(temperatur[1128])
-print(temperatur[4570])
