@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-Created on Sun Oct  6 12:17:19 2024
+Created on Mon Oct  7 14:55:00 2024
 
 @author: nouba
 """
@@ -13,7 +13,9 @@ Created on Sun Oct  6 12:17:19 2024
 # fra den andre filen også.
 # =============================================================================
 
+
 from datetime import datetime
+import matplotlib.pyplot as plt
 
 #filnavnet som skal leses
 filnavn = 'trykk_og_temperaturlogg_rune_time.csv.txt'
@@ -22,7 +24,7 @@ filnavn = 'trykk_og_temperaturlogg_rune_time.csv.txt'
 def data_leser (filnavn):
     datoer = []
     tider = []
-    dt_objekter = []
+    dt_objekter_1 = []
     tid_siden_start = []
     trykk_bar = []
     trykk_abs = []
@@ -50,7 +52,7 @@ def data_leser (filnavn):
             try:
                 data_deler = linje.strip().split(';') #Detaljert beskrivelse over
                 dato_tid = datetime.strptime(data_deler[0], '%m.%d.%Y %H:%M')
-                dt_objekter.append(dato_tid)     #Datetime objekter for plott?
+                dt_objekter_1.append(dato_tid)     #Datetime objekter for plott?
                 
                 datoer.append(dato_tid.date())  #legger kun til dato(unødvendig?)
                 tider.append(dato_tid.time())   #legger kun til tid(unødvendig?)
@@ -73,12 +75,11 @@ def data_leser (filnavn):
             temperatur.append(data_deler[4])             #beskrivelse over
             
 
-    return datoer, tider, dt_objekter, tid_siden_start, trykk_bar, trykk_abs, temperatur
+    return datoer, tider, dt_objekter_1, tid_siden_start, trykk_bar, trykk_abs, temperatur
 
 #Kaller på funksjonen data_leser med alle listenavnene slik at de fylles
-datoer, tider, dt_objekter, tid_siden_start, trykk_bar, trykk_abs, temperatur = data_leser(filnavn)
+datoer, tider, dt_objekter_1, tid_siden_start, trykk_bar, trykk_abs, temperatur = data_leser(filnavn)
 
- 
 # =============================================================================
 # Bruker en for-løkke og går igjennom (itererer) listene element for element.
 # Sjekker om verdien i den relative indeksen [i] er tom (False) eller 
@@ -110,14 +111,93 @@ for i in range(len(temperatur)):
     else:               #hvis verdien er tom, sett det til None
         temperatur[i] = None
         
-#Skriv ut en prøve
-for i in range (0, 7):
-    print(f"INDEKS nr. {i}:")
-    print(f"dato:        {datoer[i]}")
-    print(f"tider:       {tider[i]}")
-    print(f"datetime:    {dt_objekter[i]}")
-    print(f"tid s. s:    {tid_siden_start[i]}")
-    print(f"trykk bar:   {trykk_bar[i]}")
-    print(f"trykk abs:   {trykk_abs[i]}")
-    print(f"temperatur:  {temperatur[i]}")
-    print("______________________________")
+        
+# =============================================================================
+# FIL NR 2. (DEN KORTE FILA)
+# =============================================================================
+#filnavnet som skal leses
+filnavn = 'temperatur_trykk_met_samme_rune_time_datasett.csv.txt'
+
+#funksjon som leser inn data fra 'filnavn'
+def data_leser_2 (filnavn):
+
+    datoer_2 = []
+    tider_2 = []
+    dt_objekter_2 = []
+    temperatur_luft = []
+    trykk_hav = []
+    
+#Åpner filen "filnavn" for lesing i utf-8 konvertert form    
+    with open(filnavn, 'r', encoding='utf-8') as fil:
+#Leser linje for linje og opretter datetime objekter og fyller tid og dato i
+#hver sin liste. Fyller de andre to listene med relaterte data i strengformat
+        for linje in fil:
+            try:
+                data_deler = linje.strip().split(';')
+                dato_tid = datetime.strptime(data_deler[2], '%d.%m.%Y %H:%M')
+                dt_objekter_2.append(dato_tid)
+                datoer_2.append(dato_tid.date())
+                tider_2.append(dato_tid.time()) 
+            except ValueError: 
+                continue
+            
+            temperatur_luft.append(data_deler[3])
+            trykk_hav.append(data_deler[4])
+        
+    return datoer_2, tider_2, dt_objekter_2, temperatur_luft, trykk_hav
+
+#Kaller på funksjonen og fyller listene
+datoer_2, tider_2, dt_objekter_2, temperatur_luft, trykk_hav = data_leser_2(filnavn)
+
+
+#Gjør om verdiene i lufttemperatur til flyttall
+for i in range (len(temperatur_luft)):
+    if temperatur_luft[i]:
+        temperatur_luft[i] = float(temperatur_luft[i].replace(',', '.'))
+    else:
+        temperatur_luft[i] = None
+        
+#Gjør om verdiene i lufttrykk i havnivå til flyttall
+for i in range (len(trykk_hav)):
+    if trykk_hav[i]:
+        trykk_hav[i] = float(trykk_hav[i].replace(',', '.'))
+    else:
+        trykk_hav[i] = None
+        
+
+def gjennomsnitt_temperatur (gjennomsnitt):
+    for i in range():
+        n = 30
+        t_forrige = 0
+        t_forrige += temperatur[i]
+        
+
+
+
+
+#x-koordinater fra lengste fil
+x_koordinater_1 = (dt_objekter_1)
+#y-koordinater fra lengste fil
+y_koordinater_1 = (temperatur)
+
+#x-koordinater fra korteste fil
+x_koordinater_2 = (dt_objekter_2)
+#y-koordinater fra korteste fil
+y_koordinater_2 = (temperatur_luft)
+
+#temperaturer fra den lengste fila
+plt.plot(x_koordinater_1, y_koordinater_1, label="Temperatur", color='blue', 
+         linewidth=1)
+
+#temperaturer fra den lengste fila
+plt.plot(x_koordinater_2, y_koordinater_2, label="Temperatur MET", color='green',
+         linewidth=1)
+
+#temperaturer fra den andre fila
+plt.plot()
+plt.legend()
+plt.show()
+
+
+print(temperatur[1128])
+print(temperatur[4570])
