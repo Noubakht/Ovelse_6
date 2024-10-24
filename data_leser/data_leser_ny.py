@@ -22,7 +22,7 @@ filnavn = 'trykk_og_temperaturlogg_rune_time.csv.txt'
 def data_leser (filnavn):
     datoer = []
     tider = []
-    dt_objekter = []
+
     tid_siden_start = []
     trykk_bar = []
     trykk_abs = []
@@ -49,11 +49,7 @@ def data_leser (filnavn):
             #try, except for å håndtere når datoene skifter format
             try:
                 data_deler = linje.strip().split(';') #Detaljert beskrivelse over
-                dato_tid = datetime.strptime(data_deler[0], '%m.%d.%Y %H:%M')
-                dt_objekter.append(dato_tid)     #Datetime objekter for plott?
-                
-                datoer.append(dato_tid.date())  #legger kun til dato(unødvendig?)
-                tider.append(dato_tid.time())   #legger kun til tid(unødvendig?)
+
             except ValueError:
                 continue   #fortsetter (hopper over) når datoene skifter format
             
@@ -72,11 +68,6 @@ def data_leser (filnavn):
             trykk_abs.append(data_deler[3])              #beskrivelse over
             temperatur.append(data_deler[4])             #beskrivelse over
             
-
-    return datoer, tider, dt_objekter, tid_siden_start, trykk_bar, trykk_abs, temperatur
-
-#Kaller på funksjonen data_leser med alle listenavnene slik at de fylles
-datoer, tider, dt_objekter, tid_siden_start, trykk_bar, trykk_abs, temperatur = data_leser(filnavn)
 
  
 # =============================================================================
@@ -115,8 +106,7 @@ for i in range (0, 7):
     print(f"INDEKS nr. {i}:")
     print(f"dato:        {datoer[i]}")
     print(f"tider:       {tider[i]}")
-    print(f"datetime:    {dt_objekter[i]}")
-    print(f"tid s. s:    {tid_siden_start[i]}")
+
     print(f"trykk bar:   {trykk_bar[i]}")
     print(f"trykk abs:   {trykk_abs[i]}")
     print(f"temperatur:  {temperatur[i]}")
