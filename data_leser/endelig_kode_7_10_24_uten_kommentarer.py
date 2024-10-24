@@ -170,7 +170,7 @@ gj_tider, gjennomsnitt_temp = gj_temp(dt_objekter_1, temperatur, 30)
 # OPPGAVE H (Temperaturfall mellom 11.06.21 kl 17:32 til 12.06.21 kl 03:05)
 # =============================================================================
 
-# Funksjon for å beregne temperaturfallet
+#funksjon for å beregne temperaturfallet
 def temperaturfall(dt_objekter_1, temperatur):
     delta_temp = temperatur[4570] - temperatur[1128]
     delta_tid = (dt_objekter_1[4570] - dt_objekter_1[1128]).total_seconds()
@@ -186,6 +186,35 @@ def temperaturfall(dt_objekter_1, temperatur):
 
 (stigningstall, tid_start, temp_start,tid_slutt,
 temp_slutt) = temperaturfall(dt_objekter_1, temperatur)
+
+# =============================================================================
+# ØVING 10 KOMMER UNDER HER. ALL NY KODE FOR ØVING 10 MÅ SKRIVES UNDER HER SÅ
+# VI FÅR HOLDT OVERSIKTEN
+# =============================================================================
+
+# =============================================================================
+# OPPGAVE A (Temperaturfall mellom 11.06.21 kl
+# =============================================================================
+
+#funksjon for temperaturfall i den korte fila
+def temperaturfall_2(dt_objekter_2, temperatur_luft):
+       
+    delta_temp_2 = temperatur_luft[slutt] - temperatur_luft[start]
+    delta_tid_2 = (dt_objekter_2[slutt] - dt_objekter_2[start]).total_seconds()
+    
+    stigningstall_2 = delta_temp_2 / delta_tid_2
+    
+    return (stigningstall_2, dt_objekter_2[start], temperatur_luft[start], 
+            dt_objekter_2[slutt], temperatur_luft[slutt])
+
+slutt = 26
+start = 10
+
+(stigningstall_2, tid_start_2, temp_start_2, tid_slutt_2, 
+temp_slutt_2) = temperaturfall_2(dt_objekter_2, temperatur_luft)
+
+print(temperatur_luft[start])
+print(dt_objekter_2[start])
 
 # =============================================================================
 # ALL PLOTTING SKJER UNDER DENNE LINJA
@@ -260,8 +289,19 @@ akse1.plot(x_gjennomsnitt_temp, y_gjennomsnitt_temp,
 x_temperaturfall = tid_start, tid_slutt
 y_temperaturfall = temp_start, temp_slutt
 
-# Plot linjen som representerer temperaturfallet (rød graf, litt svak rødfarge)
+#grafen som representerer temperaturfallet (rød graf, litt svak rødfarge)
 akse1.plot(x_temperaturfall, y_temperaturfall, label="Temperaturfall", 
+         color='red', linewidth=0.5)
+
+# =============================================================================
+# Plotting av temperaturfall 2 fra oppgave A - Øving 10
+# =============================================================================
+#x og y-koordinater for temperaturfall 2
+x_temperaturfall = tid_start_2, tid_slutt_2
+y_temperaturfall = temp_start_2, temp_slutt_2
+
+#graf som representerer temperaturfallet (rød graf, litt svak farge)
+akse1.plot(x_temperaturfall, y_temperaturfall, label="Temperaturfall Rune", 
          color='red', linewidth=0.5)
 
 
