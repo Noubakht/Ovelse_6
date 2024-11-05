@@ -230,6 +230,7 @@ start = 10
 (stigningstall_2, tid_start_2, temp_start_2, tid_slutt_2,
  temp_slutt_2) = temperaturfall_2(dt_objekter_2, temperatur_luft)
 
+
 # =============================================================================
 # OPPGAVE E (Gjennomsnittlig forskjell mellom trykk og temperatur fra begge
 # gamle filer og hvilke tidspunkt forskjellen er størst og minst
@@ -239,13 +240,13 @@ like_tider = set()
 temp_diff_dict = dict()
 trykk_diff_dict = dict()
 
-
 for i in range(len(dt_objekter_1)):
     for n in range(len(dt_objekter_2)):
         
         if dt_objekter_2[n] == dt_objekter_1[i] and dt_objekter_2[n] not in like_tider:
             
             #if dt_objekter_2
+            
                 like_tider.add(dt_objekter_2[n])
                 temp_diff = abs(temperatur[i] - temperatur_luft[n])
                 trykk_diff = abs(trykk_abs[i] - trykk_hav[n])
@@ -282,7 +283,7 @@ print(f"Gjennomsnitt:   {gs_trykk: .3f} hPa")
 print(f"Maksimum:       {maks_trykk: .3f} hPa ved tidspunkt: {maks_trykk_tid}")
 print(f"Minimum:        {min_trykk: .3f} hPa ved tidspunkt: {min_trykk_tid}")
 #print(temp_diff_liste[:10]) 
-#print(trykk_diff_liste[:10])        
+#print(trykk_diff_liste[:10]
 
 # =============================================================================
 # ALL PLOTTING SKJER UNDER DENNE LINJA
@@ -381,8 +382,10 @@ plt.legend()
 
 
 plt.subplot(3, 1, 3)
-plt.hist([temperatur, temperatur_luft], bins=30, histtype='bar', 
-         label=["Temperatur", "Temperatur MET"])
+plt.hist([temperatur, temperatur_luft], bins=30, density=True, histtype='bar', 
+         label=["Temperatur", "Temperatur MET"], color=['blue', 'green'])
+plt.xlabel("Temperatur (°C)")  # Sett passende etikett for x-aksen
+plt.ylabel("Sannsynlighetstetthet")
 plt.title("temperatur histogram")
 
 
@@ -394,7 +397,7 @@ plt.title("temperatur histogram")
 # 
 # =============================================================================
 
-
+plt.tight_layout()
 plt.legend()
 plt.plot()
 plt.show()
