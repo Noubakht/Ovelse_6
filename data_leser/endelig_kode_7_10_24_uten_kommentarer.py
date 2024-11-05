@@ -211,10 +211,7 @@ print(dt_objekter_2[start])
 # =============================================================================
 # OPPGAVE C (Differanse mellom barometrisk trykk og absolutt trykk)
 # =============================================================================
-def differanse_trykk(trykk_bar_endret, trykk_abs):
-    delta_trykk = trykk_bar_endret - trykk_abs
 
-    return delta_trykk
 
 
 # =============================================================================
