@@ -1,6 +1,5 @@
 from datetime import datetime
 import matplotlib.pyplot as plt
-
 # =============================================================================
 # OPPGAVE D OG E (FIL NR. 1 (DEN LANGE FILA))
 # =============================================================================
@@ -207,6 +206,15 @@ temp_slutt_2) = temperaturfall_2(dt_objekter_2, temperatur_luft)
 
 print(temperatur_luft[start])
 print(dt_objekter_2[start])
+
+#==============================================================================
+# 10 c)
+#==============================================================================
+
+def differanse_trykk(trykk_bar_endret, trykk_abs):
+    delta_trykk = trykk_bar_endret-trykk_abs
+
+    return delta_trykk
 
 #==============================================================================
 # 10 d) 
