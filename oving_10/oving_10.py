@@ -379,10 +379,20 @@ plt.legend()
 # OPPGAVE B - ØVING 10 (Histogram over temperatur fra begge gamle filer)
 # =============================================================================
 
+
 plt.subplot(3, 1, 3)
 plt.hist([temperatur, temperatur_luft], bins=30, histtype='bar', 
          label=["Temperatur", "Temperatur MET"])
 plt.title("temperatur histogram")
+
+
+# =============================================================================
+# plt.subplot(3, 1, 3)
+# plt.hist([temperatur, temperatur_luft], bins=range(10, 23), histtype='bar', 
+#          label=["Temperatur", "Temperatur MET"])
+# plt.title("temperatur histogram")
+# 
+# =============================================================================
 
 
 plt.legend()

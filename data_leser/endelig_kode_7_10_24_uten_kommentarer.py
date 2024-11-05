@@ -162,6 +162,8 @@ def gj_temp (gj_tider, gjennomsnitt_temp, n):
         gjennomsnitt_temp.append(gjennomsnitt)
         gj_tider.append(dt_objekter_1[i])
         
+        liste[2:4]
+        
     return gj_tider, gjennomsnitt_temp
 
 gj_tider, gjennomsnitt_temp = gj_temp(dt_objekter_1, temperatur, 30)
@@ -213,8 +215,7 @@ start = 10
 (stigningstall_2, tid_start_2, temp_start_2, tid_slutt_2, 
 temp_slutt_2) = temperaturfall_2(dt_objekter_2, temperatur_luft)
 
-print(temperatur_luft[start])
-print(dt_objekter_2[start])
+
 
 # =============================================================================
 # ALL PLOTTING SKJER UNDER DENNE LINJA
