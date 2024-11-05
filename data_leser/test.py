@@ -6,10 +6,10 @@ import matplotlib.pyplot as plt
 # =============================================================================
 
 #filnavnet som skal leses
-filnavn_1 = 'trykk_og_temperaturlogg_rune_time.csv.txt'
+filnavn_1 = 'Ovelse_6/data_leser/trykk_og_temperaturlogg_rune_time.csv.txt'
 
 #funksjon som leser inn data fra 'filnavn'
-def data_leser (filnavn):
+def data_leser (filnavn_1):
     datoer = []
     tider = []
     dt_objekter_1 = []
@@ -88,7 +88,7 @@ for i in range(len(temperatur)):
 # =============================================================================
 
 #filnavnet som skal leses
-filnavn_2 = 'temperatur_trykk_met_samme_rune_time_datasett.csv.txt'
+filnavn_2 = 'Ovelse_6/data_leser/temperatur_trykk_met_samme_rune_time_datasett.csv.txt'
 
 #funksjon som leser inn data fra 'filnavn'
 def data_leser_2 (filnavn_2):
@@ -208,6 +208,59 @@ temp_slutt_2) = temperaturfall_2(dt_objekter_2, temperatur_luft)
 print(temperatur_luft[start])
 print(dt_objekter_2[start])
 
+#==============================================================================
+# 10 d) 
+#==============================================================================
+
+filnavn_3 = "Ovelse_6/data_leser/temperatur_trykk_sauda_sinnes_samme_tidsperiode.csv.txt"
+
+def data_leser_3(filnavn_3):
+    sinnes_datoer = []
+    sinnes_tider = []
+    sinnes_dt_objekter = []
+    sinnes_temperatur = []
+    sinnes_trykk = []
+    
+    sauda_datoer = []
+    sauda_tider = []
+    sauda_dt_objekter = []
+    sauda_temperatur = []
+    sauda_trykk = []
+
+    with open(filnavn_3, 'r', encoding='utf-8') as fil:
+        next(fil)  # Hopp over første linje (header)
+        
+        for linje in fil:
+            try:
+                data_deler = linje.strip().split(';')
+                dato_tid = datetime.strptime(data_deler[2], '%d.%m.%Y %H:%M')
+                
+                if data_deler[0] == "Sirdal - Sinnes":
+                    sinnes_dt_objekter.append(dato_tid)
+                    sinnes_datoer.append(dato_tid.date())
+                    sinnes_tider.append(dato_tid.time())
+                    sinnes_temperatur.append(float(data_deler[3].replace(',', '.')))
+                    sinnes_trykk.append(float(data_deler[4].replace(',', '.')))
+                
+                elif data_deler[0] == "Sauda":
+                    sauda_dt_objekter.append(dato_tid)
+                    sauda_datoer.append(dato_tid.date())
+                    sauda_tider.append(dato_tid.time())
+                    sauda_temperatur.append(float(data_deler[3].replace(',', '.')))
+                    sauda_trykk.append(float(data_deler[4].replace(',', '.')))
+            
+            except ValueError:
+                continue
+
+    return (sinnes_datoer, sinnes_tider, sinnes_dt_objekter, sinnes_temperatur, sinnes_trykk,
+            sauda_datoer, sauda_tider, sauda_dt_objekter, sauda_temperatur, sauda_trykk)
+
+# Kall på funksjonen og fyller listene
+(sinnes_datoer, sinnes_tider, sinnes_dt_objekter, sinnes_temperatur, sinnes_trykk,
+ sauda_datoer, sauda_tider, sauda_dt_objekter, sauda_temperatur, sauda_trykk) = data_leser_3(filnavn_3)
+
+
+
 # =============================================================================
 # ALL PLOTTING SKJER UNDER DENNE LINJA
 # =============================================================================
@@ -295,6 +348,90 @@ y_temperaturfall = temp_start_2, temp_slutt_2
 #graf som representerer temperaturfallet (rød graf, litt svak farge)
 akse1.plot(x_temperaturfall, y_temperaturfall, label="Temperaturfall Rune", 
          color='red', linewidth=0.5)
+
+
+# =============================================================================
+#plotting opggave d) 
+# =============================================================================
+
+import matplotlib.pyplot as plt
+from datetime import datetime
+
+filnavn_3 = "Ovelse_6/data_leser/temperatur_trykk_sauda_sinnes_samme_tidsperiode.csv.txt"
+
+def data_leser_3(filnavn_3):
+    sinnes_datoer = []
+    sinnes_tider = []
+    sinnes_dt_objekter = []
+    sinnes_temperatur = []
+    sinnes_trykk = []
+    
+    sauda_datoer = []
+    sauda_tider = []
+    sauda_dt_objekter = []
+    sauda_temperatur = []
+    sauda_trykk = []
+
+    with open(filnavn_3, 'r', encoding='utf-8') as fil:
+        next(fil)  # Hopp over første linje (header)
+        
+        for linje in fil:
+            try:
+                data_deler = linje.strip().split(';')
+                dato_tid = datetime.strptime(data_deler[2], '%d.%m.%Y %H:%M')
+                
+                if data_deler[0] == "Sirdal - Sinnes":
+                    sinnes_dt_objekter.append(dato_tid)
+                    sinnes_datoer.append(dato_tid.date())
+                    sinnes_tider.append(dato_tid.time())
+                    sinnes_temperatur.append(float(data_deler[3].replace(',', '.')))
+                    sinnes_trykk.append(float(data_deler[4].replace(',', '.')))
+                
+                elif data_deler[0] == "Sauda":
+                    sauda_dt_objekter.append(dato_tid)
+                    sauda_datoer.append(dato_tid.date())
+                    sauda_tider.append(dato_tid.time())
+                    sauda_temperatur.append(float(data_deler[3].replace(',', '.')))
+                    sauda_trykk.append(float(data_deler[4].replace(',', '.')))
+            
+            except ValueError:
+                continue
+
+    return (sinnes_datoer, sinnes_tider, sinnes_dt_objekter, sinnes_temperatur, sinnes_trykk,
+            sauda_datoer, sauda_tider, sauda_dt_objekter, sauda_temperatur, sauda_trykk)
+
+# Kall på funksjonen og fyller listene
+(sinnes_datoer, sinnes_tider, sinnes_dt_objekter, sinnes_temperatur, sinnes_trykk,
+ sauda_datoer, sauda_tider, sauda_dt_objekter, sauda_temperatur, sauda_trykk) = data_leser_3(filnavn_3)
+
+# Plotting av data
+plt.figure(figsize=(12, 6))
+
+# Plot for Sirdal - Sinnes
+plt.subplot(2, 1, 1)
+plt.plot(sinnes_dt_objekter, sinnes_trykk, label='Trykk - Sinnes', color='tab:orange')
+plt.plot(sinnes_dt_objekter, sauda_trykk, label='Trykk - Sauda', color='tab:red')
+plt.xlabel('Dato')
+plt.ylabel('Verdi')
+plt.title('Sirdal - Sinnes Værdata')
+plt.legend()
+plt.grid(True)
+
+# Plot for Sauda
+plt.subplot(2, 1, 2)
+plt.plot(sinnes_dt_objekter, sauda_temperatur, label='Temperatur - Sauda', color='tab:green')
+plt.plot(sinnes_dt_objekter, sinnes_temperatur, label='Temperatur - Sinnes', color='tab:blue')
+plt.xlabel('Dato')
+plt.ylabel('Verdi')
+plt.title('Sauda Værdata')
+plt.legend()
+plt.grid(True)
+
+plt.tight_layout()
+plt.show()
+
+
+
 
 
 #plottemetoder for koordinatsystem med temperaturer

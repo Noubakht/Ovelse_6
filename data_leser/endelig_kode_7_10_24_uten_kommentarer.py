@@ -6,10 +6,10 @@ import matplotlib.pyplot as plt
 # =============================================================================
 
 #filnavnet som skal leses
-filnavn_1 = "C:\Users\Vngo2\OneDrive\Documents\DAT120\Ovelse_6\data_leser\temperatur_trykk_met_samme_rune_time_datasett.csv.txt"
+filnavn_1 = "Ovelse_6/data_leser/trykk_og_temperaturlogg_rune_time.csv.txt"
 
 #funksjon som leser inn data fra 'filnavn'
-def data_leser (filnavn):
+def data_leser (filnavn_1):
     datoer = []
     tider = []
     dt_objekter_1 = []
@@ -88,7 +88,7 @@ for i in range(len(temperatur)):
 # =============================================================================
 
 #filnavnet som skal leses
-filnavn_2 = 'C:\Users\Vngo2\OneDrive\Documents\DAT120\Ovelse_6\data_leser\trykk_og_temperaturlogg_rune_time.csv.txt'
+filnavn_2 = 'Ovelse_6/data_leser/temperatur_trykk_met_samme_rune_time_datasett.csv.txt'
 
 #funksjon som leser inn data fra 'filnavn'
 def data_leser_2 (filnavn_2):
@@ -215,7 +215,6 @@ def differanse_trykk(trykk_bar_endret, trykk_abs):
     delta_trykk = trykk_bar_endret - trykk_abs
 
     return delta_trykk
-
 
 
 # =============================================================================
