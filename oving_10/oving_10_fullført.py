@@ -1,0 +1,483 @@
+# -*- coding: utf-8 -*-
+"""
+Created on Thu Oct 24 21:03:23 2024
+
+@author: nouba
+"""
+
+# =============================================================================
+# ØVING 6 KOMMER UNDER HER. Øving 10 kommer lenger ned
+# =============================================================================
+
+from math import sqrt
+from datetime import datetime
+import matplotlib.pyplot as plt
+
+# =============================================================================
+# OPPGAVE D OG E (FIL NR. 1 (DEN LANGE FILA))
+# =============================================================================
+
+# filnavnet som skal leses
+filnavn_1 = 'trykk_og_temperaturlogg_rune_time.csv.txt'
+
+# funksjon som leser inn data fra 'filnavn'
+def data_leser(filnavn):
+    dt_objekter_1 = []
+    tid_siden_start = []
+    trykk_bar = []
+    trykk_abs = []
+    temperatur = []
+
+# åpner filen "filnavn_1" for lesing ("r") og konverterer til "utf-8" som er
+# standard for tekstfilbehandling, og kaller filen for "fil"
+    with open(filnavn_1, 'r', encoding='utf-8') as fil:
+
+        # itererer gjennom hver "linje" i "fil" og lagrer data i de forskjellige listene
+        for linje in fil:
+            # try, except for å håndtere når datoene skifter format
+            try:
+                data_deler = linje.strip().split(';')  # Detaljert beskrivelse over
+                dato_tid = datetime.strptime(data_deler[0], '%m.%d.%Y %H:%M')
+                dt_objekter_1.append(dato_tid)  # Datetime objekter for plott?
+            except ValueError:
+                continue  # fortsetter (hopper over) når datoene skifter format
+
+            tid_siden_start.append(float(data_deler[1]))  # beskrivelse over
+            trykk_bar.append(data_deler[2])  # beskrivelse over
+            trykk_abs.append(data_deler[3])  # beskrivelse over
+            temperatur.append(data_deler[4])  # beskrivelse over
+
+    return (dt_objekter_1,tid_siden_start, trykk_bar, trykk_abs, temperatur)
+
+
+# Kaller på funksjonen data_leser med alle listenavnene slik at de fylles
+(dt_objekter_1,
+ tid_siden_start, trykk_bar,
+ trykk_abs, temperatur) = data_leser(filnavn_1)
+
+# Endrer trykk barometer lista (ganger med 10 for å gjøre om til hPa)
+for i in range(len(trykk_bar)):
+    if trykk_bar[i]:  # sjekker om det er verdier der
+        trykk_bar[i] = float(trykk_bar[i].replace(',', '.')) * 10
+    else:  # hvis verdien er tom, sett det til None
+        trykk_bar[i] = None
+
+# Her har jeg driti meg ut og trodd at matplotlib godtar None. men det gjorde
+# den ikke så jeg gidder ikke endre koden mer nå. bare legger til denne her
+# for å fikse problemet
+trykk_bar_endret = []
+tid_trykk_bar_endret = []
+
+for i in range(len(trykk_bar)):
+    if trykk_bar[i] is not None:  # Sjekker om verdien ikke er None
+        trykk_bar_endret.append(trykk_bar[i])
+        tid_trykk_bar_endret.append(dt_objekter_1[i])
+
+# Endrer trykk absolutt lista (ganger med 10 for å gjøre om til hPa)
+for i in range(len(trykk_abs)):
+    if trykk_abs[i]:  # sjekke om det er verdier der
+        trykk_abs[i] = float(trykk_abs[i].replace(',', '.')) * 10
+    else:  # hvis verdien er tom, sett det til None
+        trykk_abs[i] = None
+
+# Endrer temperatur lista
+for i in range(len(temperatur)):
+    if temperatur[i]:  # sjekker om det er verdier der
+        temperatur[i] = float(temperatur[i].replace(',', '.'))
+    else:  # hvis verdien er tom, sett det til None
+        temperatur[i] = None
+
+
+# =============================================================================
+# OPPGAVE D OG E. (FIL NR 2. (DEN KORTE FILA))
+# =============================================================================
+
+# filnavnet som skal leses
+filnavn_2 = 'temperatur_trykk_met_samme_rune_time_datasett.csv.txt'
+
+# funksjon som leser inn data fra 'filnavn'
+
+
+def data_leser_2(filnavn_2):
+    dt_objekter_2 = []
+    temperatur_luft = []
+    trykk_hav = []
+
+# Åpner filen "filnavn" for lesing i utf-8 konvertert form
+    with open(filnavn_2, 'r', encoding='utf-8') as fil:
+        # Leser linje for linje og opretter datetime objekter og fyller tid og dato i
+        # hver sin liste. Fyller de andre to listene med relaterte data i strengformat
+        for linje in fil:
+            try:
+                data_deler = linje.strip().split(';')
+                dato_tid = datetime.strptime(data_deler[2], '%d.%m.%Y %H:%M')
+                dt_objekter_2.append(dato_tid)
+            except ValueError:
+                continue
+
+            temperatur_luft.append(data_deler[3])
+            trykk_hav.append(data_deler[4])
+
+    return dt_objekter_2, temperatur_luft, trykk_hav
+
+
+# Kaller på funksjonen og fyller listene
+(dt_objekter_2, temperatur_luft, trykk_hav) = data_leser_2(filnavn_2)
+
+
+# Gjør om verdiene i lufttemperatur til flyttall
+for i in range(len(temperatur_luft)):
+    if temperatur_luft[i]:
+        temperatur_luft[i] = float(temperatur_luft[i].replace(',', '.'))
+    else:
+        temperatur_luft[i] = None
+
+# Gjør om verdiene i lufttrykk i havnivå til flyttall
+for i in range(len(trykk_hav)):
+    if trykk_hav[i]:
+        trykk_hav[i] = float(trykk_hav[i].replace(',', '.'))
+    else:
+        trykk_hav[i] = None
+
+# =============================================================================
+# OPPGAVE G) Gjennomsnittstemperatur fra den lange lista med data.
+# =============================================================================
+
+# Funksjon som regner gjennomsnittet på de 30 siste, gjeldende og 30 neste temp.
+
+
+def gj_temp(n):
+    gjennomsnitt_temp = []  #tom liste for gjennomsnittet som skal regnes ut
+    gj_tider = []  #tom liste til tider som skal høre til gjennomsnittet
+    standardavvik = [] #tom liste for standardavviket
+    
+    for i in range(n, len(temperatur) - n):
+        delta_temp = temperatur[(i-n): (i + n + 1)]
+        gjennomsnitt = sum(delta_temp)/len(delta_temp)
+        gjennomsnitt_temp.append(gjennomsnitt)
+        gj_tider.append(dt_objekter_1[i])
+        
+# =============================================================================
+#         for i in delta_temp:
+#             std = sqrt(sum((i - gjennomsnitt) **2))
+# =============================================================================
+        #Beregning av standardavvik
+        std = sqrt(sum((i - gjennomsnitt) ** 2 for i in delta_temp) / (len(delta_temp) - 1))
+        standardavvik.append(std)
+        
+    return gj_tider, gjennomsnitt_temp, standardavvik
+
+
+gj_tider, gjennomsnitt_temp, standardavvik = gj_temp(30)
+
+# =============================================================================
+# OPPGAVE H (Temperaturfall mellom 11.06.21 kl 17:32 til 12.06.21 kl 03:05)
+# =============================================================================
+
+# funksjon for å beregne temperaturfallet
+
+
+def temperaturfall():
+    delta_temp = temperatur[4570] - temperatur[1128]
+    delta_tid = (dt_objekter_1[4570] - dt_objekter_1[1128]).total_seconds()
+
+    stigningstall = delta_temp / delta_tid  # Endring i temperatur per sekund
+
+    # returner de to punktene og stigningstallet
+    return (stigningstall, dt_objekter_1[1128],
+            temperatur[1128], dt_objekter_1[4570], temperatur[4570])
+
+# indeks_1 = 1128  #indeks for starttid
+# indeks_2 = 4570  #indeks for sluttid
+
+
+(stigningstall, tid_start, temp_start, tid_slutt,
+ temp_slutt) = temperaturfall()
+
+# =============================================================================
+# ØVING 10 KOMMER UNDER HER. ALL NY KODE FOR ØVING 10 MÅ SKRIVES UNDER HER SÅ
+# VI FÅR HOLDT OVERSIKTEN
+# =============================================================================
+
+# =============================================================================
+# OPPGAVE A (Temperaturfall mellom 11.06.21 kl
+# =============================================================================
+
+# funksjon for temperaturfall i den korte fila
+
+
+def temperaturfall_2(dt_objekter_2, temperatur_luft):
+
+    delta_temp_2 = temperatur_luft[slutt] - temperatur_luft[start]
+    delta_tid_2 = (dt_objekter_2[slutt] - dt_objekter_2[start]).total_seconds()
+
+    stigningstall_2 = delta_temp_2 / delta_tid_2
+
+    return (stigningstall_2, dt_objekter_2[start], temperatur_luft[start],
+            dt_objekter_2[slutt], temperatur_luft[slutt])
+
+
+slutt = 26
+start = 10
+
+(stigningstall_2, tid_start_2, temp_start_2, tid_slutt_2,
+ temp_slutt_2) = temperaturfall_2(dt_objekter_2, temperatur_luft)
+
+
+# =============================================================================
+# # OPPGAVE C (Differanse mellom barometrisk trykk og absolutt trykk)
+# =============================================================================
+
+def gj_diff(n):
+    gjennomsnitt_diff = []  # tom liste for gjennomsnittet som skal regnes ut
+    gj_tider = []  # tom liste til tider som skal høre til gjennomsnittet
+
+    for i in range(n, len(differanse) - n):
+        delta_diff = differanse[(i-n) : (i + n + 1)]
+        gjennomsnitt = sum(delta_diff) / len(delta_diff) 
+        
+        gjennomsnitt_diff.append(gjennomsnitt)
+        gj_tider.append(dt_objekter_1[i])
+        
+    return gj_tider, gjennomsnitt_diff
+
+# Beregn differansen
+differanse = [trykk_bar_endret[i] - trykk_abs[i] for i in range(len(trykk_bar_endret))]
+
+# Beregn gjennomsnittet av differansene
+gj_tider_diff, gjennomsnitt_diff = gj_diff(10)
+#De 2 tomme listene er gj_tider og gjennomsnitt_diff
+
+# =============================================================================
+# #OPPGAVE D) 
+# =============================================================================
+
+filnavn_3 = "temperatur_trykk_sauda_sinnes_samme_tidsperiode.csv.txt"
+
+def data_leser_3(filnavn_3):
+#Sinnes data
+    sinnes_dt_objekter = []
+    sinnes_temperatur = []
+    sinnes_trykk = []
+
+#Sauda data    
+    sauda_dt_objekter = []
+    sauda_temperatur = []
+    sauda_trykk = []
+
+    with open(filnavn_3, 'r', encoding='utf-8') as fil:
+        next(fil) 
+        
+        for linje in fil:
+            try:
+                data_deler = linje.strip().split(';')
+                dato_tid = datetime.strptime(data_deler[2], '%d.%m.%Y %H:%M')
+                
+                if data_deler[0] == "Sirdal - Sinnes":
+                    sinnes_dt_objekter.append(dato_tid)
+                    sinnes_temperatur.append(float(data_deler[3].replace(',', '.')))
+                    sinnes_trykk.append(float(data_deler[4].replace(',', '.')))
+                
+                elif data_deler[0] == "Sauda":
+                    sauda_dt_objekter.append(dato_tid)
+                    sauda_temperatur.append(float(data_deler[3].replace(',', '.')))
+                    sauda_trykk.append(float(data_deler[4].replace(',', '.')))
+            
+            except ValueError:
+                continue
+
+    return (sinnes_dt_objekter, sinnes_temperatur, sinnes_trykk, 
+            sauda_dt_objekter, sauda_temperatur, sauda_trykk)
+
+
+(sinnes_dt_objekter, sinnes_temperatur, sinnes_trykk, sauda_dt_objekter, 
+ sauda_temperatur, sauda_trykk) = data_leser_3(filnavn_3)
+
+
+# =============================================================================
+# OPPGAVE E (Gjennomsnittlig forskjell mellom trykk og temperatur fra begge
+# gamle filer og hvilke tidspunkt forskjellen er størst og minst
+# =============================================================================
+
+like_tider = set()
+temp_diff_dict = dict()
+trykk_diff_dict = dict()
+
+#går gjennom begge dt listene samtidig 
+for i in range(len(dt_objekter_1)):
+    for n in range(len(dt_objekter_2)):
+        
+        if dt_objekter_2[n] == dt_objekter_1[i] and dt_objekter_2[n] not in like_tider:
+
+            like_tider.add(dt_objekter_2[n])
+            temp_diff = abs(temperatur[i] - temperatur_luft[n])
+            trykk_diff = abs(trykk_abs[i] - trykk_hav[n])
+            
+            temp_diff_dict[dt_objekter_2[n]] = temp_diff
+            trykk_diff_dict[dt_objekter_2[n]] = trykk_diff             
+
+#beregning av gjennomsnitt, max og min for TEMPERATUR
+gs_temp = sum(temp_diff_dict.values()) / len(temp_diff_dict)
+maks_temp = max(temp_diff_dict.values())
+min_temp = min(temp_diff_dict.values())
+
+#beregning av tider for maks/min TEMPERATUR
+maks_temp_tid = max(temp_diff_dict, key=temp_diff_dict.get)
+min_temp_tid = min(temp_diff_dict, key=temp_diff_dict.get)
+
+#beregning av gjennomsnitt, max og min for TRYKK
+gs_trykk = sum(trykk_diff_dict.values()) / len(temp_diff_dict)
+maks_trykk = max(trykk_diff_dict.values())
+min_trykk = min(trykk_diff_dict.values())
+
+#beregning av tider for maks/min for TRYKK
+maks_trykk_tid = max(trykk_diff_dict, key=trykk_diff_dict.get)
+min_trykk_tid = min(trykk_diff_dict, key=trykk_diff_dict.get)
+
+#skriver ut gjennomsnitt, max, min og tidene dette gjelder for temperatur
+print("TEMPERATURDIFFERANSE:")
+print(f"Gjennomsnitt:   {gs_temp: .2f} C")
+print(f"Maksimum:       {maks_temp: .2f} C     ved tidspunkt: {maks_temp_tid}")
+print(f"Minimum:        {min_temp: .2f} C     ved tidspunkt: {min_temp_tid}")
+print("--------------------------------------------------------------")
+print("TRYKKDIFFERANSE:")
+print(f"Gjennomsnitt:   {gs_trykk: .3f} hPa")
+print(f"Maksimum:       {maks_trykk: .3f} hPa ved tidspunkt: {maks_trykk_tid}")
+print(f"Minimum:        {min_trykk: .3f} hPa ved tidspunkt: {min_trykk_tid}")
+
+
+# =============================================================================
+# ALL PLOTTING SKJER UNDER DENNE LINJA
+# =============================================================================
+
+plt.figure(figsize=(14, 16))
+
+# =============================================================================
+# OPPGAVE I (plotting av lufttrykk,)
+# =============================================================================
+plt.subplot(4, 1, 2)
+#Plotting av barometrisk trykk (oransj graf)
+plt.plot(tid_trykk_bar_endret, trykk_bar_endret, label="Barometrisk trykk",
+           color='orange', linewidth=0.5)
+#Plotting av absolutt trykk (blå graf)
+plt.plot(dt_objekter_1, trykk_abs, label="Absolutt trykk", color='blue',
+           linewidth=0.5)
+
+#plotting av absolutt trykk MET (Grønn graf)
+plt.plot(dt_objekter_2, trykk_hav, label="Absolutt trykk MET",
+           color='green', linewidth=0.5)
+plt.title("Trykk")
+plt.ylabel("Trykk i hPa")
+plt.legend()
+
+
+#===========================================================================
+# PLOTTING D - Øving 10
+#===========================================================================
+
+plt.plot(sinnes_dt_objekter, sinnes_trykk, label='Trykk - Sinnes', color='tab:orange',)
+plt.plot(sinnes_dt_objekter, sauda_trykk, label='Trykk - Sauda', color='tab:red')
+plt.legend()
+
+
+
+# =============================================================================
+# OPPGAVE F (Plotting av temperaturer fra begge datafilene)
+# =============================================================================
+plt.subplot(4, 1, 1)
+plt.ylabel("Temperatur i grader")
+#Plotting av temperaturer fra den lengste fila (blå graf)
+plt.plot(dt_objekter_1, temperatur, label="Temperatur", color='blue',
+           linewidth=0.5)
+
+#Plotting av temperaturer fra den korteste fila (grønn graf)
+plt.plot(dt_objekter_2, temperatur_luft, label="Temperatur MET", color='green',
+           linewidth=0.5)
+plt.title("Temperaturer")
+
+# =============================================================================
+# Plotting av gjennomsnittstemperatur fra oppgave G
+# =============================================================================
+
+#Plotting av gjennomsnittstemperaturen (oransj graf)
+plt.plot(gj_tider, gjennomsnitt_temp, label="Gjennomsnittstemperatur", 
+             color='orange', linewidth=0.5)
+
+
+# =============================================================================
+# Plotting av temperaturfall fra oppgave H
+# =============================================================================
+
+# x og y-koordinater for temperaturfallet
+x_temperaturfall = tid_start, tid_slutt
+y_temperaturfall = temp_start, temp_slutt
+
+# grafen som representerer temperaturfallet (rød graf, litt svak rødfarge)
+plt.plot(x_temperaturfall, y_temperaturfall, label="Temperaturfall",
+           color='red', linewidth=0.5)
+
+# =============================================================================
+# Plotting av temperaturfall 2 fra oppgave A - Øving 10
+# =============================================================================
+
+#x og y-koordinater for temperaturfall 2
+x_temperaturfall = tid_start_2, tid_slutt_2
+y_temperaturfall = temp_start_2, temp_slutt_2
+
+#graf som representerer temperaturfallet (mørkerød graf)
+plt.plot(x_temperaturfall, y_temperaturfall, label="Temperaturfall Rune",
+           color='darkred', linewidth=0.5)
+
+# =============================================================================
+# OPPGAVE D - Øving 10
+# =============================================================================
+plt.plot(sinnes_dt_objekter, sauda_temperatur, label='Temperatur - Sauda', color='tab:green')
+plt.plot(sinnes_dt_objekter, sinnes_temperatur, label='Temperatur - Sinnes', color='tab:blue')
+plt.xlabel('Dato')
+plt.ylabel('Verdi')
+plt.title('Sauda værdata')
+plt.legend()
+plt.grid()
+# =============================================================================
+# OPPGAVE B - ØVING 10 (Histogram over temperatur fra begge gamle filer)
+# =============================================================================
+
+plt.subplot(4, 1, 3)
+plt.hist([temperatur, temperatur_luft], bins=30, density=True, histtype='bar', 
+         label=["Temperatur", "Temperatur MET"], color=['blue', 'green'])
+plt.xlabel("Temperatur (°C)")  # Sett passende etikett for x-aksen
+plt.ylabel("Tetthet")
+plt.title("Temperatur histogram")
+
+
+
+
+
+
+
+# =============================================================================
+# Plotting av standardavviket - Oppgave F i øving 10 (plottet i en egen graf
+# for bedre synlighet)
+# =============================================================================
+
+plt.subplot(4, 1, 4)
+plt.errorbar(gj_tider, gjennomsnitt_temp,  yerr=standardavvik, errorevery=30,
+             capsize=3, label="Standardavvik i temperaturer", color='red',
+             linewidth=1)
+
+#plottingsegenskaper og diverse..
+plt.tight_layout()
+plt.legend()
+plt.plot()
+plt.show()
+
+#===========================================================================
+#LOTTING C - Øving 10)
+#===========================================================================
+plt.figure(figsize=(12, 8))
+plt.plot(gj_tider_diff, gjennomsnitt_diff, label="Trykk differanse", 
+         linewidth=1.0)
+plt.title("Trykk differanse fra Rune Time fila")
+plt.legend()
+plt.grid()
+plt.show()
